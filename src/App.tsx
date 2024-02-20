@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { fetchTracks } from './lib/fetchTracks';
 import { useQuery } from '@tanstack/react-query';
 import { SavedTrack } from 'spotify-types';
+import swal from 'sweetalert';
 
 
 const trackUrls = [
@@ -16,7 +17,6 @@ const trackUrls = [
 
 
 
-
 const App = () => {
 
   const { data: tracks,isLoading } = useQuery({
@@ -26,16 +26,14 @@ const App = () => {
   console.log(tracks)
   const [trackIndex, setTrackIndex] = useState(0)
 
+  let choix1;
+  let choix2;
+  let choix3;
+
 const goToNextTrack = () => {
   setTrackIndex(trackIndex + 1);
 
 }
-
-
-
-
-
-
 
   return (
     <div className="App">
@@ -43,26 +41,48 @@ const goToNextTrack = () => {
         <img src={logo} className="App-logo" alt="logo" />
         <h1 className="App-title">Blind test basto</h1>
       </header>
+
       <AlbumCover track={tracks ? tracks[trackIndex] : undefined} />;
+
       <div className="App-images">
         <p>playlist de basto la menace!</p>
         <p>{tracks?.length}</p> 
         <p>{tracks ? tracks[0]?.track.name : 'loading'}</p>
-        <audio src={trackUrls[trackIndex]} autoPlay controls />
+        Albumcover;
+        <audio src= {tracks ? tracks[trackIndex]?.track.preview_url : undefined} autoPlay controls />
+
 <button onClick={goToNextTrack}>
     Next track
 </button>
+
+
       </div>
       <div className="App-buttons"></div>
+      <button onClick={() => checkAnswer(tracks ? tracks[trackIndex]?.track.name : 'loading',tracks ? tracks[0]?.track.name : 'loading')}>{tracks ? tracks[getRandomInt(50)]?.track.name : 'loading'}</button>
+      <button onClick={() => checkAnswer(tracks ? tracks[trackIndex]?.track.name : 'loading',tracks ? tracks[1]?.track.name : 'loading')}>{tracks ? tracks[getRandomInt(50)]?.track.name : 'loading'}</button>
+      <button onClick={() => checkAnswer(tracks ? tracks[trackIndex]?.track.name : 'loading',tracks ? tracks[2]?.track.name : 'loading')}>{tracks ? tracks[getRandomInt(50)]?.track.name : 'loading'}</button>
     </div>
 
   );
   };
 const AlbumCover = ({ track }: {track : SavedTrack | undefined}) =>  {
-  const src = "https://example.com/image.png"; // A changer ;)
+  const src = track?.track.preview_url; // A changer ;)
     return (
         <img src={src} style={{ width: 400, height: 400 }} />
     );
+}
+
+const checkAnswer = (trackName:string | undefined,trackSelectedName:string|undefined)=> {
+  if (trackName==trackSelectedName){
+    swal('Bravo, tu es un bon toi');
+  }
+  else {
+    swal('c faux tu es un fatigué')
+  }
+
+}
+function getRandomInt(max:number) {
+  return Math.floor(Math.random() * max);
 }
 
 export default App;
