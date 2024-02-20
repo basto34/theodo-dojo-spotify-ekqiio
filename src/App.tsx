@@ -1,7 +1,9 @@
 import logo from './assets/logo.svg';
 import './App.css';
 import { useState } from 'react';
-
+import { fetchTracks } from './lib/fetchTracks';
+import { useQuery } from '@tanstack/react-query';
+import { SavedTrack } from 'spotify-types';
 
 
 const trackUrls = [
@@ -14,21 +16,38 @@ const trackUrls = [
 
 
 
+
 const App = () => {
-  
+
+  const { data: tracks,isLoading } = useQuery({
+    queryKey: ['tracks'],
+    queryFn: fetchTracks
+  });
+  console.log(tracks)
   const [trackIndex, setTrackIndex] = useState(0)
 
 const goToNextTrack = () => {
   setTrackIndex(trackIndex + 1);
+
 }
+
+
+
+
+
+
+
   return (
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <h1 className="App-title">Blind test basto</h1>
       </header>
+      <AlbumCover track={tracks ? tracks[trackIndex] : undefined} />;
       <div className="App-images">
-        <p>Il va falloir modifier le code pour faire un vrai blind test !</p>
+        <p>playlist de basto la menace!</p>
+        <p>{tracks?.length}</p> 
+        <p>{tracks ? tracks[0]?.track.name : 'loading'}</p>
         <audio src={trackUrls[trackIndex]} autoPlay controls />
 <button onClick={goToNextTrack}>
     Next track
@@ -36,9 +55,14 @@ const goToNextTrack = () => {
       </div>
       <div className="App-buttons"></div>
     </div>
+
   );
-
-};
-
+  };
+const AlbumCover = ({ track }: {track : SavedTrack | undefined}) =>  {
+  const src = "https://example.com/image.png"; // A changer ;)
+    return (
+        <img src={src} style={{ width: 400, height: 400 }} />
+    );
+}
 
 export default App;
